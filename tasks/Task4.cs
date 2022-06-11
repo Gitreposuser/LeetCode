@@ -1,6 +1,4 @@
-﻿using System;
-
-public class Task4
+﻿public class Task4
 {
 	public Task4()
 	{

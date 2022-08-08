@@ -2,77 +2,118 @@
 {
     public Task5()
     {
-        //string testString = "ccc";
-        string testString = "12cabdbac78jkaba";
+        string[] testArr = { "a",
+                             "ab",
+                             "bb",
+                             "bba",
+                             "abb",
+                             "ccc",             // 3c
+                             "123ccccLok",      // 4c
+                             "123cccccLok",     // 5c
+                             "12ccccccccSFx",   // 8c
+                             "12345abcd",
+                             "12cabdbac78jkaba",
+                             "13abcddcba7aba",
+                             "12zabcffcbaz96abba",
+                             "123cccabdfdbaccc78aba"};
 
-        Show(LongestPalindrome(testString));
+        TestAllCases(testArr);
     }
+
     public string LongestPalindrome(string s)
     {
+        // Single symbol string
         if (s.Length == 1)
             return s;
 
-        s = s.ToUpper();
-
-        const int shift = 48;
-        short[] alreadyin = new short[43];
-        short currentPos = 0;
-        string subString = "";
-        string result = "";
-
-        while (currentPos < s.Length)
+        // Two symbol string
+        if(s.Length == 2)
         {
-            bool inList = alreadyin[s[currentPos] - shift] != 0;
-
-            if (inList)
-            {
-                short start = (short)(alreadyin[s[currentPos] - shift] - 1);
-                short length = (short)(currentPos - start + 1);
-                alreadyin[s[currentPos] - shift] = (short)(currentPos + 1);
-                subString = s.Substring(start, length);
-
-                if (isPalindrom(subString))
-                {
-                    if (result.Length < subString.Length)
-                        result = subString;
-                }
-            }
+            if (s[0] == s[1])
+                return s;
             else
-            {
-                alreadyin[s[currentPos] - shift] = (short)(currentPos + 1);
-            }
-
-            if (currentPos < s.Length)
-            {
-                currentPos++;
-            }
+                return s.Substring(1, 1);
         }
 
-        if (result == "")
-            result = (string)(s[0] + "");
+        // Multy symbol string
+        int curPos = 1;
+        string result = s.Substring(0, 1);
+
+        while(curPos + 1 <= s.Length)
+        {
+            // Odd case
+            if(s[curPos - 1] == s[curPos])
+            {
+                string locResult = ScanPalindrom(curPos - 1, curPos, ref s);
+                result = NewBiggerPalindrom(ref locResult, ref result);
+            }
+
+            if ((curPos + 1) == s.Length)
+                break;
+
+            // Even case
+            if (s[curPos - 1] == s[curPos + 1])
+            {
+                string locResult = ScanPalindrom(curPos, curPos, ref s);
+                result = NewBiggerPalindrom(ref locResult, ref result);
+            }
+
+            curPos++;
+        }
 
         return result.ToLower();
     }
-    private bool isPalindrom(string text)
+
+    private string ScanPalindrom(int firstPos, int secPos, ref string s)
     {
-        if (text.Length == 1)
-            return true;
-
-        bool result = true;
-        short start = 0;
-        short end = (short)(text.Length - 1);
-
-        while (start < end)
+        while (s[firstPos] == s[secPos])
         {
-            if (text[start] != text[end])
-                return false;
-
-            start++;
-            end--;
+            if ((firstPos > 0) &&
+                (secPos < s.Length - 1))
+            {
+                firstPos--;
+                secPos++;
+            }
+            else
+            {
+                firstPos--;
+                secPos++;
+                break;
+            }
         }
+
+        firstPos++;
+        secPos--;
+
+        string locResult = s.Substring(firstPos, ((secPos + 1) - firstPos));
+        return locResult;
+    }
+
+    private string NewBiggerPalindrom(ref string locResult, ref string result)
+    {
+        if (locResult.Length > result.Length)
+            result = locResult;
 
         return result;
     }
+
+    private void TestAllCases(string[] testArr)
+    {
+        int testCase = 0;
+        try
+        {
+            for(; testCase < testArr.Length; testCase++)
+            {
+                Show($"test case: {testArr[testCase]} result: {LongestPalindrome(testArr[testCase])}");
+            }
+            Show(" ******* \n >>> All test successful <<< \n *******");
+        }
+        catch
+        {
+            Show($"case: {testCase} with string: {testArr[testCase]} - Failed!");
+        }
+    }
+
     private void Show(string message)
     {
 #if DEBUG

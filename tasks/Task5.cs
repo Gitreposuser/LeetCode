@@ -1,23 +1,25 @@
-﻿public class Task5
+﻿public class Task5 : IAct, IShowCase, IShowResult
 {
+    string[] testArr;
+    private int testCase;
+    private string result;
+
     public Task5()
     {
-        string[] testArr = { "a",
-                             "ab",
-                             "bb",
-                             "bba",
-                             "abb",
-                             "ccc",             // 3c
-                             "123ccccLok",      // 4c
-                             "123cccccLok",     // 5c
-                             "12ccccccccSFx",   // 8c
-                             "12345abcd",
-                             "12cabdbac78jkaba",
-                             "13abcddcba7aba",
-                             "12zabcffcbaz96abba",
-                             "123cccabdfdbaccc78aba"};
-
-        TestAllCases(testArr);
+        testArr = new string[] { "a",
+                                 "ab",
+                                 "bb",
+                                 "bba",
+                                 "abb",
+                                 "ccc",             // 3c
+                                 "123ccccLok",      // 4c
+                                 "123cccccLok",     // 5c
+                                 "12ccccccccSFx",   // 8c
+                                 "12345abcd",
+                                 "12cabdbac78jkaba",
+                                 "13abcddcba7aba",
+                                 "12zabcffcbaz96abba",
+                                 "123cccabdfdbaccc78aba"};
     }
 
     public string LongestPalindrome(string s)
@@ -97,29 +99,36 @@
         return result;
     }
 
-    private void TestAllCases(string[] testArr)
+    public void Act()
     {
-        int testCase = 0;
         try
         {
-            for(; testCase < testArr.Length; testCase++)
-            {
-                Show($"test case: {testArr[testCase]} result: {LongestPalindrome(testArr[testCase])}");
-            }
-            Show(" ******* \n >>> All test successful <<< \n *******");
+            result = LongestPalindrome(testArr[testCase]);
         }
         catch
         {
-            Show($"case: {testCase} with string: {testArr[testCase]} - Failed!");
+            OutputHelper.Show($" test case: {testCase} testData: {testArr[testCase]}");
+            OutputHelper.Show(" ERROR!!! ");
         }
     }
 
-    private void Show(string message)
+    public bool IsNext()
     {
-#if DEBUG
-        Debug.WriteLine(message);
-#else
-        Console.WriteLine(message);
-#endif
+        if (testCase < testArr.Length - 1)
+        {
+            testCase++;
+            return true;
+        }
+        return false;
+    }
+
+    public void ShowCase()
+    {
+        OutputHelper.Show($" test #: {testCase} case: {testArr[testCase]}");
+    }
+
+    public void ShowResult()
+    {
+        OutputHelper.Show($"    result: {result}");
     }
 }

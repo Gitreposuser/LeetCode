@@ -1,22 +1,27 @@
-﻿public class Task4
+﻿public class Task4 : IAct, IShowCase, IShowResult
 {
-	public Task4()
-	{
-        int[] nums1 = { 10, 11, 12, 14, 17, 18, 29, 90 };
-        //int[] nums1 = null;
-        int[] nums2 = { 2, 3, 5, 6, 30 };
-        //int[] nums2 = { 1, 3, 5, 6, 8, 9 };
-        //int[] nums2 = null;
+    private int[][] testArr;
+    private int[][] testArr2;
+    private int testCase;
+    private double result;
 
-        double result = FindMedian(nums1, nums2);
-        Show($" result is: {result}");
-        Test(nums1, nums2);
+    public Task4()
+	{
+        testArr = new int[][] 
+        { 
+            new int[] { 10, 11, 12, 14, 17, 18, 29, 90 },
+            new int[] { 3, 5, 8}
+        };
+        testArr2 = new int[][] 
+        { 
+            new int[] { 2, 3, 5, 6, 30 },
+            new int[] { 7, 10, 11, 15 }
+        };
+        testCase = 0;
+        result = 0;
     }
     public double FindMedian(int[] nums1, int[] nums2)
     {
-        ShowArray(nums1);
-        ShowArray(nums2);
-
         // When one of the arrays is empty
         if (nums1 == null)
             return GetMedian(nums2);
@@ -107,6 +112,7 @@
                     return arr2[midIndex - arr1.Length];
             }
         }
+
         double GetMedian(int[] arr)
         {
             bool even = arr.Length % 2 == 0;
@@ -120,11 +126,13 @@
 
             return result;
         }
+
         int GetMidIndex(int start, int end)
         {
             return (start + end) / 2;
         }
     }
+
     public double GetMedian(int[] arr)
     {
         bool even = arr.Length % 2 == 0;
@@ -138,14 +146,52 @@
 
         return result;
     }
+
     public int GetMidIndex(int start, int end)
     {
         return (start + end) / 2;
     }
-    public void Show(string text)
+
+    public void Act()
     {
-        Debug.WriteLine(text);
+        try
+        {
+            result = FindMedian(testArr[testCase], testArr2[testCase]);
+        }
+        catch
+        {
+            OutputHelper.Show(" ERROR!!! ");
+            OutputHelper.Show($" test case: {testCase} testData1: ");
+            ShowArray(testArr[testCase]);
+            OutputHelper.Show($" test case: {testCase} testData2: ");
+            ShowArray(testArr2[testCase]);
+        }
     }
+
+    public bool IsNext()
+    {
+        if (testCase < testArr.Length - 1)
+        {
+            testCase++;
+            return true;
+        }
+        return false;
+    }
+
+    public void ShowCase()
+    {
+        OutputHelper.Show($" test #: {testCase} case: ");
+        ShowArray(testArr[testCase]);
+        ShowArray(testArr2[testCase]);
+    }
+
+    public void ShowResult()
+    {
+        OutputHelper.Show(" Merged array : ");
+        ShowMergedArray(testArr[testCase], testArr2[testCase]);
+        OutputHelper.Show($"    result: {result}");
+    }
+
     public void ShowArray(int[] arr1)
     {
         if (arr1 == null)
@@ -154,102 +200,64 @@
             Debug.Write(arr1[i] + ", ");
         Debug.WriteLine("");
     }
+
     public void ShowMergedArray(int[] arr1, int[] arr2)
     {
-        int length = arr1.Length + arr2.Length;
-        int ind1 = 0;
-        int ind2 = 0;
+        bool firstEnd = false;
+        bool secondEnd = false;
+        int firstArrPos = 0;
+        int secArrPos = 0;
+        int resArrPos = 0;
+        int[] result = new int[arr1.Length + arr2.Length];
 
-        for (int i = 0; i < (length - 1); i++)
+        while(!(firstEnd && secondEnd))
         {
-            if (arr1[ind1] < arr2[ind2])
+            if(firstEnd)
             {
-                if (ind1 < (arr1.Length - 1))
-                {
-                    Debug.Write(arr1[ind1] + ", ");
-                    ind1++;
-                }
+                result[resArrPos] = arr2[secArrPos];
+                resArrPos++;
+
+                if (secArrPos < arr2.Length - 1)
+                    secArrPos++;
                 else
-                    Debug.Write(arr1[ind1] + ", " + arr2[ind2]);
-            }
-            else
-            {
-                if (ind2 < (arr2.Length - 1))
-                {
-                    Debug.Write(arr2[ind2] + ", ");
-                    ind2++;
-                }
-                else
-                    Debug.Write(arr2[ind2] + ", " + arr1[ind1]);
-            }
-        } // for
-
-        Debug.WriteLine("");
-    }
-    public void Test(int[] arr1, int[] arr2)
-    {
-        Show(" Verification...");
-        double result;
-
-        if (arr1 == null)
-        {
-            ShowArray(arr2);
-            result = GetMedian(arr2);
-            Show(" median is: " + result);
-            return;
-        }
-        if (arr2 == null)
-        {
-            ShowArray(arr1);
-            result = GetMedian(arr1);
-            Show(" median is: " + result);
-            return;
-        }
-
-        int length = arr1.Length + arr2.Length;
-        int ind1, ind2;
-        ind1 = ind2 = 0;
-        bool firstEnd, secondEnd;
-        firstEnd = secondEnd = false;
-        int[] mergedArr = new int[length];
-
-        for (int i = 0; i < length; i++)
-        {
-            if (firstEnd)
-            {
-                mergedArr[i] = arr2[ind2];
-                ind2++;
+                    secondEnd = true;
                 continue;
             }
+
             if (secondEnd)
             {
-                mergedArr[i] = arr1[ind1];
-                ind1++;
+                result[resArrPos] = arr1[firstArrPos];
+                resArrPos++;
+
+                if (firstArrPos < arr1.Length - 1)
+                    firstArrPos++;
+                else
+                    firstEnd = true;
                 continue;
             }
-            if (arr1[ind1] < arr2[ind2])
+
+            if (arr1[firstArrPos] < arr2[secArrPos])
             {
-                mergedArr[i] = arr1[ind1];
-                if (ind1 < (arr1.Length - 1))
-                    ind1++;
+                result[resArrPos] = arr1[firstArrPos];
+
+                if (firstArrPos < arr1.Length - 1)
+                    firstArrPos++;
                 else
                     firstEnd = true;
             }
             else
             {
-                mergedArr[i] = arr2[ind2];
-                if (ind2 < (arr2.Length - 1))
-                    ind2++;
+                result[resArrPos] = arr2[secArrPos];
+
+                if (secArrPos < arr2.Length - 1)
+                    secArrPos++;
                 else
                     secondEnd = true;
             }
+
+            resArrPos++;
         }
 
-        Show(" merged array: ");
-        ShowArray(mergedArr);
-
-        result = GetMedian(mergedArr);
-
-        Show(" median is: " + result);
-    } // Test
+        ShowArray(result);
+    }
 }

@@ -1,23 +1,26 @@
-﻿public class Task6
+﻿public class Task6 : IAct, IShowCase, IShowResult
 {
+    private readonly string[] testArr;
+    private readonly int[] testRows;
+    private int testCase;
+    private string result;
+
     public Task6()
     {
-        string[] testArr = { "PAYPALISHIRING",
-                             "aaabbbcccdddeee",
-                             "A",
-                             "bb",
-                             "bba",
-                             "abb",
-                             "ccc"};
-        int[] testRows = { 4,
-                           2,
-                           3,
-                           4,
-                           5,
-                           6,
-                           7 };
-
-        TestAllCases(testArr, testRows);
+        testArr = new string[] { "PAYPALISHIRING",
+                                 "aaabbbcccdddeee",
+                                 "A",
+                                 "bb",
+                                 "bba",
+                                 "abb",
+                                 "ccc"};
+        testRows = new int[] { 4,
+                               2,
+                               3,
+                               4,
+                               5,
+                               6,
+                               7 };
     }
 
     public string Convert(string s, int numRows)
@@ -63,30 +66,38 @@
         return result;
     }
 
-    private void TestAllCases(string[] testArr, int[] testRows)
+    public void Act()
     {
-        int testCase = 0;
         try
         {
-            for (; testCase < testArr.Length; testCase++)
-            {
-                Show($"test case: {testArr[testCase]}" +
-                     $" result: {Convert(testArr[testCase], testRows[testCase])}");
-            }
-            Show(" ******* \n >>> All test successful <<< \n *******");
+            result = Convert(testArr[testCase], testRows[testCase]);
         }
         catch
         {
-            Show($"case: {testCase} with string: {testArr[testCase]} - Failed!");
+            OutputHelper.Show($" test case: {testCase} testData: {testArr[testCase]}" +
+                                $" rows number {testRows[testCase]}");
+            OutputHelper.Show(" ERROR!!! ");
         }
     }
 
-    private void Show(string message)
+    public bool IsNext()
     {
-#if DEBUG
-        Debug.WriteLine(message);
-#else
-        Console.WriteLine(message);
-#endif
+        if (testCase < testArr.Length - 1)
+        {
+            testCase++;
+            return true;
+        }
+        return false;
+    }
+
+    public void ShowCase()
+    {
+        OutputHelper.Show($" test #: {testCase} case: {testArr[testCase]}" +
+                            $" rows number {testRows[testCase]}");
+    }
+
+    public void ShowResult()
+    {
+        OutputHelper.Show($"    result: {result}");
     }
 }

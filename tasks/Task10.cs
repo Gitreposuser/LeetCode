@@ -8,88 +8,106 @@
     public Task10()
     {
         testArr = new string[] { "aa",
+                                 "a",
+                                 "aaa",
+                                 "aaa",
                                  "aab",
-                                 "askdj",
-                                 "askdj",
-                                 "akjsf",
-                                 "askll",
-                                 "askll",
-                                 "askll",
-                                 "aknbhg",
-                                 "aknbhg",
-                                 "aknbhg",
-                                 "aknbhg",
-                                 "m3xceu",
-                                 "m3xceu",
-                                 "m3xceu",
-                                 "m3xceu",
-                                 "m3xceu",
-                                 "m3xceu" };
+                                 "baa",
+                                 "baa",
+                                 "baa",
+                                 "bab",
+                                 "baa",
+                                 "baa",
+                                 "baa",
+                                 "baa",
+                                 "baa",
+                                 "baa",
+                                 "a" };
 
         testArr2 = new string[] { "a",
-                                  "c*a*b",
-                                  "askdj",
-                                  "askdi",
                                   "aa",
-                                  "ask..",
-                                  ".skl.",
-                                  "..kll",
-                                  "ak*g",
-                                  "*ak....",
-                                  "ak*",
-                                  "*ak*",
-                                  ".3*",
-                                  ".3xc...*",
-                                  ".3xc.b",
-                                  ".3xc..b*",
-                                  ".3xc..bca*",
-                                  ".*3*e." };
+                                  "a*a",
+                                  "a*b",
+                                  "a*.",
+                                  "a*.",
+                                  "a*aa",
+                                  "a*baa",
+                                  "a*.aa",
+                                  "a*b*ab",
+                                  ".*",
+                                  ".*c",
+                                  ".*a",
+                                  ".*.",
+                                  ".*....",
+                                  "a"};
         testCase = 0;
         result = false;
     }
 
     private bool IsMatch(string s, string p)
     {
-        int curPos = -1;
-        for (int i = 0; i < s.Length; i++)
-        {
-            if (curPos < p.Length - 1)
-                curPos++;
-            else
-                return false;
-            if (p[curPos] == '.')
-                continue;
-            if (p[curPos] == '*')
-            {
-                if (curPos < p.Length - 1)
-                    curPos++;
-                else
-                    return true;
+        int sPos = -1;
+        int pPos = -1;
+        bool sEnd = false;
+        bool pEnd = false;
+        char prev = s[0];
 
-                bool locMatch = false;
-                for(int n = i; n < s.Length; n++)
+        while(true)
+        {
+            // Increasing phrase and filter positions
+            if (sPos < s.Length - 1)
+                sPos++;
+            else
+                sEnd = true;
+            if (pPos < p.Length - 1)
+                pPos++;
+            else
+                pEnd = true;
+
+            if (sEnd && pEnd)
+                break;
+
+            if ('*' == p[pPos])
+            {
+                int i = sPos;
+                for(; i < s.Length; i++)
                 {
-                    if (s[n] != p[curPos])
+                    if ('.' == prev)
+                        continue;
+                    if (prev == s[i])
                         continue;
                     else
                     {
-                        locMatch = true;
-                        i = n;
+                        sPos = i;
                         break;
                     }
                 }
-                if (!locMatch)
-                    return false;
+                sPos = i - 1;
                 continue;
             }
-            if (s[i] != p[curPos])
+            // Simple cases '.' and symbol
+            if ('.' == p[pPos])
+            {
+                prev = '.';
+                continue;
+            }
+            if (s[sPos] == p[pPos] && (!pEnd))
+            {
+                prev = s[sPos];
+            }
+            else
+            {
+                if (pPos < p.Length - 1)
+                {
+                    if ('*' == p[pPos + 1])
+                    {
+                        sPos--;
+                        pPos++;
+                        continue;
+                    }
+                }
                 return false;
-        }
-        if (curPos < p.Length - 1)
-        {
-            curPos++;
-            if (p[curPos] != '*')
-                return false;
+            }
         }
         return true;
     }

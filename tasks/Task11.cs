@@ -34,26 +34,18 @@
         int secInd = height.Length - 1;
         int secEl = height.Length - 1;
         int minHeight = 0;
-        int counter = 0;
 
         ChoseSmallerElement();
         CheckMaxArea(CalculateArea(firstEl, secEl));
 
-        while (true)
+        while (firstInd < secInd)
         {
             if(IsNextBigger())
             {
                 ChoseSmallerElement();
                 CheckMaxArea(CalculateArea(firstEl, secEl));
             }
-            Tick();
-
-            // Stop condition
-            if(0 == secInd)
-            {
-                break;
-            }
-            counter++;
+            NextStep();
         }
         return maxArea;
 
@@ -104,15 +96,15 @@
             }
             return false;
         }
-        void Tick()
+        void NextStep()
         {
-            if (0 == (counter % 2))
+            if(height[firstEl] < height[secEl])
             {
-                secInd--;
+                firstInd++;
             }
             else
             {
-                firstInd++;
+                secInd--;
             }
         }
     }

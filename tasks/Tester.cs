@@ -2,7 +2,7 @@
 {
     public static void Test()
     {
-        Task11 task = new Task11();
+        Task12 task = new Task12();
 
         do
         {
